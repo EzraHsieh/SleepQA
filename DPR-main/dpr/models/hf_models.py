@@ -20,12 +20,12 @@ from torch import nn
 
 if transformers.__version__.startswith("4"):
     from transformers import BertConfig, BertModel
-    from transformers import AdamW
+    from torch.optim import AdamW
     from transformers import BertTokenizer
     from transformers import RobertaTokenizer
 else:
     from transformers.modeling_bert import BertConfig, BertModel
-    from transformers.optimization import AdamW
+    from torch.optim import AdamW
     from transformers.tokenization_bert import BertTokenizer
     from transformers.tokenization_roberta import RobertaTokenizer
 
@@ -295,7 +295,8 @@ class BertTensorizer(Tensorizer):
                 text_pair=text,
                 add_special_tokens=add_special_tokens,
                 max_length=self.max_length if apply_max_len else 10000,
-                pad_to_max_length=False,
+                # pad_to_max_length=False,
+                padding=False,
                 truncation=True,
             )
         else:
@@ -303,7 +304,8 @@ class BertTensorizer(Tensorizer):
                 text,
                 add_special_tokens=add_special_tokens,
                 max_length=self.max_length if apply_max_len else 10000,
-                pad_to_max_length=False,
+                # pad_to_max_length=False,
+                padding=False,
                 truncation=True,
             )
 

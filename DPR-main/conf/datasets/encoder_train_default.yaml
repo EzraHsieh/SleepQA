@@ -51,3 +51,19 @@ sleep_train:
 sleep_dev:
   _target_: dpr.data.biencoder_data.JsonQADataset
   file: "../../../../data/training/sleep-dev.json"
+
+sleep_train_200:
+  _target_: dpr.data.biencoder_data.JsonQADataset
+  file: "/home/ezrah/CS598_DLH/project/SleepQA/data/training/sleep-train-200.json"
+
+sleep_train_500:
+  _target_: dpr.data.biencoder_data.JsonQADataset
+  file: "/home/ezrah/CS598_DLH/project/SleepQA/data/training/sleep-train-500.json"
+
+sleep_train_1000:
+  _target_: dpr.data.biencoder_data.JsonQADataset
+  file: "/home/ezrah/CS598_DLH/project/SleepQA/data/training/sleep-train-1000.json"
+
+sleep_train_2000:
+  _target_: dpr.data.biencoder_data.JsonQADataset
+  file: "/home/ezrah/CS598_DLH/project/SleepQA/data/training/sleep-train-2000.json"

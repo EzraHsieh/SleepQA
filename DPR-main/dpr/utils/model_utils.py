@@ -156,7 +156,25 @@ def get_model_file(args, file_prefix) -> str:
 
 
 def load_states_from_checkpoint(model_file: str) -> CheckpointState:
-    logger.info("Reading saved model from %s", model_file)
-    state_dict = torch.load(model_file, map_location=lambda s, l: default_restore_location(s, "cpu"))
-    logger.info("model_state_dict keys %s", state_dict.keys())
+    # logger.info("Reading saved model from %s", model_file)
+    # state_dict = torch.load(model_file, map_location=lambda s, l: default_restore_location(s, "cpu"))
+    # logger.info("model_state_dict keys %s", state_dict.keys())
+    # return CheckpointState(**state_dict)
+
+    """
+    More robust loading of checkpoint state 
+    """
+    # allow DictConfig objects in checkpoints (used by Hydra)
+    from omegaconf import DictConfig
+    import torch
+    torch.serialization.add_safe_globals([DictConfig])
+
+    print(f"Loading checkpoint from {model_file}...")
+    
+    state_dict = torch.load(
+        model_file,
+        map_location=lambda s, l: default_restore_location(s, "cpu"),
+        weights_only=False  # Required to load optimizer/scheduler states
+    )
+    
     return CheckpointState(**state_dict)

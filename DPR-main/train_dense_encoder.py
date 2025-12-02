@@ -51,6 +51,12 @@ from dpr.utils.model_utils import (
     load_states_from_checkpoint,
 )
 
+# FORCE DISABLE BUGGY FLASH ATTENTION
+if torch.cuda.is_available():
+    torch.backends.cuda.enable_flash_sdp(False)
+    torch.backends.cuda.enable_mem_efficient_sdp(False)
+    torch.backends.cuda.enable_math_sdp(True)
+
 logger = logging.getLogger()
 setup_logger(logger)
 
@@ -369,6 +375,19 @@ class BiEncoderTrainer(object):
                 q_attn_mask = self.tensorizer.get_attn_mask(q_ids)
                 ctx_attn_mask = self.tensorizer.get_attn_mask(ctx_ids_batch)
                 with torch.no_grad():
+                    # for using GPU
+                    device = next(self.biencoder.parameters()).device
+                    if isinstance(q_ids, torch.Tensor):
+                        q_ids = q_ids.to(device)
+                    if isinstance(q_segments, torch.Tensor):
+                        q_segments = q_segments.to(device)
+                    if isinstance(q_attn_mask, torch.Tensor):
+                        q_attn_mask = q_attn_mask.to(device)
+                    
+                    ctx_ids_batch = ctx_ids_batch.to(device)
+                    ctx_seg_batch = ctx_seg_batch.to(device)
+                    ctx_attn_mask = ctx_attn_mask.to(device)
+
                     q_dense, ctx_dense = self.biencoder(
                         q_ids,
                         q_segments,
